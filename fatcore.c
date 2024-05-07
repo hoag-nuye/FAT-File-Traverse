@@ -96,7 +96,37 @@ static void RESET(){
 	fatetell = 0;
 	fatmaxe = 0;
 }
+/*str to hex*/
+static uint8_t chtoHex(char ch){
+	uint8_t result;
+	
+	if('0' <= ch && '9' >= ch){
+		result = ch - '0';
+	}else if('A' <= ch && 'F' >= ch){
+		result = ch - 'A' + 0xA;
+	}else {
+		result = HEX_INVALID;
+	}
+	
+	return result;
+}
 
+//strtoHex: Convert string to hex 
+static uint8_t strtoDec(uint8_t *str, uint8_t len, uint16_t *decimal){
+	uint8_t status = TRUE;
+	*decimal = 0;
+	uint8_t idx;
+	uint8_t result;
+	for(idx = 0; idx < len; idx++){
+		result = chtoHex(str[idx]);
+		if(result == HEX_INVALID){
+			status = FALSE;
+			break;
+		}
+		*decimal += result*pow(10, len-idx-1);
+	}
+	return status;
+}
 /*==========DATASTREAM==========*/
 static void SET_ADDRESS_ROOT_DIRECTORY(Address_t _adrRootDirectory){
 	adrRootDirectory = _adrRootDirectory;
@@ -153,6 +183,7 @@ void FatReadEntry(Entry_t *entryDist){
 	}
 	
 	readEntry(adrRootDirectory + ENTRY_SIZE*fatetell);
+	//Check Root directory is folder or not
 	if(FatEOE() || !FatEID()){
 		*entryDist = (Entry_t){0};
 		return;
@@ -224,10 +255,10 @@ void FatReadFile(Address_t *adrData, uint16_t *MAX_READING){
 }
 /*Jump in an entry*/
 uint8_t FatJumpinEntry(uint16_t idEntry){
-
-	uint8_t status = 1;
+	printf("__%d__",idEntry);
+	uint8_t status = TRUE;
 	if(idEntry > fatmaxe || FatEIF()){
-		status = 0;
+		status = FALSE;
 	}else{	
 		
 		Entry_t findEntry;
@@ -253,6 +284,7 @@ uint8_t FatBackEntry(){
 	
 	uint8_t status = 1;
 	Entry_t findEntry;
+	printf("==%x==", adrRootDirectory);
 	if(adrRootDirectory == bootInfo.blockRootDir*bootInfo.numOfBytesBlock){
 		status = 0;
 	}
@@ -275,6 +307,19 @@ uint8_t FatBackEntry(){
 	fateid = TRUE;
 	return status;
 }
+/*Change State*/
+State_t ChangeState(char *inputState, uint16_t *id){
+	State_t state;
+	if(inputState[0] == 'b'){
+		state = BACK;
+	}else if(inputState[0] == 'e'){
+		state = EXIT;
+ 	}else {
+ 		strtoDec(inputState, sizeof(inputState)-1, id);
+ 		state = JUMP;
+	 }
+	 return state;
+} 
 
 
 

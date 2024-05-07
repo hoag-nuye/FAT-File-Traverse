@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "cmdio.h"
 #include "fatcore.h"
+#include "fatcmd.h"
 
 #define FILE_NAME "./floppy.img"
 /*----------Deployment----------*/
@@ -11,6 +12,7 @@
 static void ReadCmdAllEntry(){
 	Entry_t entryInfo;
 	uint16_t idEntry = 1;
+	CmdDisplayEntryFields();
 	while(!FatEOE()){
 		FatReadEntry(&entryInfo);
 		if(!FatEOE()){
@@ -29,6 +31,7 @@ static void ReadCmdFileEntry(){
 	}
 }
 
+
 /*==========CORE FUNCTION==========*/
 /*0. FatCmdOpen()*/
 void FatCmdOpen(){
@@ -45,15 +48,46 @@ void ReadCmdJumpinEntry(){
 }
 
 /*2. JumpinCmdEntry()*/
-void JumpinCmdEntry(uint8_t id){
+uint8_t JumpinCmdEntry(uint16_t id){
 	//2.1 CmdScanJumpinEntry()
 	//2.2 FatJumpinEntry(idEntry)
-	FatJumpinEntry(id);
+	return FatJumpinEntry(id);
 }
 /*3. BackCmdEntry()*/
 void BackCmdEntry(){
 	FatBackEntry();
 }
+
+/*FATcmdRUN*/
+void FatCmdRun(){
+//	State_t state = READ;
+//	char input[5];
+//	uint16_t idJump;
+//	while (state != EXIT){
+//		switch(state){
+//			case READ:
+				ReadCmdJumpinEntry();
+//				JumpinCmdEntry(6);
+//				ReadCmdJumpinEntry();
+				BackCmdEntry();
+				ReadCmdJumpinEntry();
+//				CmdScan(input);
+//				state = ChangeState(input, &idJump);
+//				break;
+//			case JUMP:
+//				JumpinCmdEntry(idJump);
+//				state = READ;
+//				break;
+//			case BACK:
+//				BackCmdEntry();
+//				state = READ;
+//				break;
+//			case EXIT: 
+//				break;
+//		}
+//	}
+}
+
 
 
 

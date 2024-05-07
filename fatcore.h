@@ -19,6 +19,7 @@ FatBackEntry()
 #define Attribute_t uint8_t
 #define TRUE 0x01
 #define FALSE 0x00
+#define HEX_INVALID 0xFF
 
 /*==========DEFINE STRUCT==========*/
 /*Struct for the object*/
@@ -70,6 +71,13 @@ typedef struct{
 	uint8_t fateod : 1;
 }FatReadingStatus;
 
+typedef enum{
+	READ,
+	JUMP,
+	BACK,
+	EXIT,
+	DONOTHING,	
+}State_t;
 
 
 

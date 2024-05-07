@@ -91,7 +91,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=farcmd.h
+FileName=fatcmd.h
 CompileCpp=0
 Folder=FATCmd
 Compile=1

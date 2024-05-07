@@ -1,6 +1,7 @@
 /*----------Include Library----------*/
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "cmdio.h"
 #include "fatcore.h"
 /*----------Deployment----------*/
@@ -22,6 +23,15 @@ void CmdDisplayFile(const char *filename , Address_t adrData, uint16_t MAX_READI
 		fclose(fileptr);
 	}
 }
+/*CmdDisplayEntryFields*/
+void CmdDisplayEntryFields(){
+	printf("| %-*s\t|%-*s\t|%-*s\t|%-*s\t|%-*s\t|\n", 
+	ID_FIELD,"stt",
+	NAME_FIELD,"Name",
+	TIME_FILE,"Date modified",
+	TYPE_FIELD,"Type",
+	SIZE_FIELD,"Size");
+}
 
 /*CmdDisplayEntry()*/
 void CmdDisplayEntry(Entry_t entryInfo, uint16_t entryOrder){
@@ -37,5 +47,28 @@ void CmdDisplayEntry(Entry_t entryInfo, uint16_t entryOrder){
     SIZE_FIELD,entryInfo.Size
 	);
 }
+/*Instruction Layout*/
+void instructionLayout(){
+//	printf("\033[H\033[J"); // delete all consolog
+//	printf("\033[25;0H");   // Move the cursor to the 10th line
+	
+	//\033[%dm : color 
+	//%6d\033[m" : string
+	printf("\033[0m%s\033[m\033[%dm%7s\033[m ", "1,2,3,...", 42, "Jumpin");//Create
+	printf("\033[0m%c\033[m\033[%dm%7s\033[m ", 'b', 42, "Back");//Show
+	printf("\033[0m%c\033[m\033[%dm%7s\033[m ", 'e', 41, "Exit");//Exit
+	printf("\n");
+}
+/*CmdScan()*/
+void CmdScan(char *dest){	
+	instructionLayout();
+	printf("What do you want ?");
+	scanf("%s", dest);
+	fflush(stdin);
+}
 
-/*CmdScanJumpinEntry()*/
+
+
+
+
+

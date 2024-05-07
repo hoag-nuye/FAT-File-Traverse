@@ -10,20 +10,15 @@ State : 3. -> set State is 1.
 
 0. , 1., 2., 3. are States
 */
-
+#include <stdio.h>
+#include <stdint.h>
 void main(){
 	FatCmdOpen();
-	ReadCmdJumpinEntry();
-	JumpinCmdEntry(6);
-	ReadCmdJumpinEntry();
-	JumpinCmdEntry(4);
-	ReadCmdJumpinEntry();
-	BackCmdEntry();
-	ReadCmdJumpinEntry();
-	BackCmdEntry();
-	ReadCmdJumpinEntry();
-	BackCmdEntry();
-	ReadCmdJumpinEntry();
-	BackCmdEntry();
-	ReadCmdJumpinEntry();
+	FatCmdRun();
+//	ReadCmdJumpinEntry();
+//	JumpinCmdEntry(6);
+//	ReadCmdJumpinEntry();
+//	JumpinCmdEntry(3);
+//	ReadCmdJumpinEntry();
+	
 }

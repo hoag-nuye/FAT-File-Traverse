@@ -25,6 +25,10 @@
 1., 2., 3. are States
 0. can become a State if wanting to open more than a fat file
 */
+/*----------Deployment----------*/
+/*==========DEFINE VARIABLE==========*/
 
+
+/*==========DEFINE STRUCT==========*/
 
 
