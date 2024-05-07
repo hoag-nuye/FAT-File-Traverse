@@ -12,13 +12,8 @@ State : 3. -> set State is 1.
 */
 #include <stdio.h>
 #include <stdint.h>
+
 void main(){
 	FatCmdOpen();
 	FatCmdRun();
-//	ReadCmdJumpinEntry();
-//	JumpinCmdEntry(6);
-//	ReadCmdJumpinEntry();
-//	JumpinCmdEntry(3);
-//	ReadCmdJumpinEntry();
-	
 }

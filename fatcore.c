@@ -1,6 +1,7 @@
 /*----------Include Library----------*/
 #include <stdio.h>
 #include <stdint.h>
+#include <math.h>
 #include "fatcore.h"
 
 /*----------Deployment----------*/
@@ -111,21 +112,30 @@ static uint8_t chtoHex(char ch){
 	return result;
 }
 
-//strtoHex: Convert string to hex 
-static uint8_t strtoDec(uint8_t *str, uint8_t len, uint16_t *decimal){
-	uint8_t status = TRUE;
+//strtoHex: Convert string to dec <=> stdlib.h :  int number = atoi(str);
+void strtoDec(uint8_t *str, uint16_t *decimal){
 	*decimal = 0;
-	uint8_t idx;
-	uint8_t result;
-	for(idx = 0; idx < len; idx++){
-		result = chtoHex(str[idx]);
-		if(result == HEX_INVALID){
-			status = FALSE;
-			break;
-		}
-		*decimal += result*pow(10, len-idx-1);
-	}
-	return status;
+//    int sign = 1;
+    int i = 0;
+
+    // ignore empty characters at the beginning of the string
+    while (str[i] == ' ') {
+        i++;
+    }
+
+//    // identify sign
+//    if (str[i] == '-') {
+//        sign = -1;
+//        i++;
+//    } else if (str[i] == '+') {
+//        i++;
+//    }
+
+    // Convert to decimal
+    while (str[i] >= '0' && str[i] <= '9') {
+        *decimal = *decimal * 10 + (str[i] - '0');
+        i++;
+    }
 }
 /*==========DATASTREAM==========*/
 static void SET_ADDRESS_ROOT_DIRECTORY(Address_t _adrRootDirectory){
@@ -216,7 +226,7 @@ void FatReadEntry(Entry_t *entryDist){
 			break;
 		case SUB_DIR:
 			readEntry(adrCurrent);
-			clusterBack = entryInfo.Cluster;
+			clusterBack = entryInfo.Cluster;//save cluster to back when have jumped into a file
 			break;
 		case _FILE:
 			readEntry(adrCurrent);
@@ -233,7 +243,6 @@ void FatReadEntry(Entry_t *entryDist){
 }
 /*Read a file entry*/
 void FatReadFile(Address_t *adrData, uint16_t *MAX_READING){
-	
 	if(FatEOD()){
 		adrData = NULL;
 		return;
@@ -255,9 +264,8 @@ void FatReadFile(Address_t *adrData, uint16_t *MAX_READING){
 }
 /*Jump in an entry*/
 uint8_t FatJumpinEntry(uint16_t idEntry){
-	printf("__%d__",idEntry);
 	uint8_t status = TRUE;
-	if(idEntry > fatmaxe || FatEIF()){
+	if(idEntry > fatmaxe || idEntry == 0 ||  FatEIF()){
 		status = FALSE;
 	}else{	
 		
@@ -267,25 +275,29 @@ uint8_t FatJumpinEntry(uint16_t idEntry){
 		for(idx = 1; idx <=idEntry; idx++){
 			FatReadEntry(&findEntry);
 		}
+		
 		if(findEntry.Attributes == SUB_DIR){
 			fateid = TRUE;
 		}else{
 			adrBackFile = adrRootDirectory;
 			fateid = FALSE;//<=> FatEIF() = TRUE
 		}
-		SET_ADDRESS_ROOT_DIRECTORY(addressDataOfBlock(findEntry.Cluster));
-		fatftell = findEntry.Cluster;
-		fateod = FALSE;
+		
+		if(findEntry.Cluster == 0x00){
+			SET_ADDRESS_ROOT_DIRECTORY(bootInfo.blockRootDir*bootInfo.numOfBytesBlock);
+		}else{
+			SET_ADDRESS_ROOT_DIRECTORY(addressDataOfBlock(findEntry.Cluster));
+			fatftell = findEntry.Cluster;
+		}
 	}
 	return status;
 }
 /*Back an entry*/
 uint8_t FatBackEntry(){
-	
 	uint8_t status = 1;
 	Entry_t findEntry;
-	printf("==%x==", adrRootDirectory);
 	if(adrRootDirectory == bootInfo.blockRootDir*bootInfo.numOfBytesBlock){
+		SET_ADDRESS_ROOT_DIRECTORY(bootInfo.blockRootDir*bootInfo.numOfBytesBlock);
 		status = 0;
 	}
 	else if(FatEIF()){
@@ -315,12 +327,16 @@ State_t ChangeState(char *inputState, uint16_t *id){
 	}else if(inputState[0] == 'e'){
 		state = EXIT;
  	}else {
- 		strtoDec(inputState, sizeof(inputState)-1, id);
+ 		strtoDec(inputState, id);
  		state = JUMP;
 	 }
 	 return state;
-} 
-
+	 
+}
+/*Reset when read new directory*/
+void FatRST(){
+	RESET();
+}
 
 
 

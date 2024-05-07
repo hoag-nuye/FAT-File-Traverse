@@ -13,6 +13,7 @@ static void ReadCmdAllEntry(){
 	Entry_t entryInfo;
 	uint16_t idEntry = 1;
 	CmdDisplayEntryFields();
+	FatRST();
 	while(!FatEOE()){
 		FatReadEntry(&entryInfo);
 		if(!FatEOE()){
@@ -20,6 +21,7 @@ static void ReadCmdAllEntry(){
 		idEntry++;
 		}	
 	}
+	CmdDisplayLineLayout();
 }
 /*1.2 ReadCmdFileEntry()*/
 static void ReadCmdFileEntry(){
@@ -60,32 +62,40 @@ void BackCmdEntry(){
 
 /*FATcmdRUN*/
 void FatCmdRun(){
-//	State_t state = READ;
-//	char input[5];
-//	uint16_t idJump;
-//	while (state != EXIT){
-//		switch(state){
-//			case READ:
+	State_t state = READ;
+	char input[5];
+	uint16_t idJump;
+	while (state != EXIT){
+		switch(state){
+			case READ:
 				ReadCmdJumpinEntry();
-//				JumpinCmdEntry(6);
-//				ReadCmdJumpinEntry();
+				CmdScan(input);
+				state = ChangeState(input,&idJump);
+				break;
+			case JUMP:
+				while(FatEIF()){
+					CmdScanAgain(input);
+					state = ChangeState(input,&idJump);
+					if(state == BACK || state == EXIT){
+						break;
+					}
+				}
+				if(FatEIF()){
+					break;
+				}
+				system("cls");
+				JumpinCmdEntry(idJump);
+				state = READ;
+				break;
+			case BACK:
+				system("cls");
 				BackCmdEntry();
-				ReadCmdJumpinEntry();
-//				CmdScan(input);
-//				state = ChangeState(input, &idJump);
-//				break;
-//			case JUMP:
-//				JumpinCmdEntry(idJump);
-//				state = READ;
-//				break;
-//			case BACK:
-//				BackCmdEntry();
-//				state = READ;
-//				break;
-//			case EXIT: 
-//				break;
-//		}
-//	}
+				state = READ;
+				break;
+			case EXIT: 
+				break;
+		}
+	}
 }
 
 
