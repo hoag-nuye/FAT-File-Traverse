@@ -142,14 +142,6 @@ static void SET_ADDRESS_ROOT_DIRECTORY(Address_t _adrRootDirectory){
 	adrRootDirectory = _adrRootDirectory;
 	RESET();
 }
-static Address_t GET_ADDRESS_SUB_ENTRY(Address_t adrEntry){
-	readEntry(adrEntry);
-	return addressDataOfBlock(entryInfo.Cluster);
-}
-uint16_t GET_SIZE_OF_BLOCK(){
-	return bootInfo.numOfBytesBlock;
-}
-
 /*==========CORE FUNCTION==========*/
 /*Check reading status*/
 uint8_t FatEID(){
