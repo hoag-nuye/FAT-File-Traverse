@@ -36,6 +36,46 @@ static void instructionLayout(uint8_t select){
 
 }
 
+/*str to hex*/
+static uint8_t chtoHex(char ch){
+	uint8_t result;
+	
+	if('0' <= ch && '9' >= ch){
+		result = ch - '0';
+	}else if('A' <= ch && 'F' >= ch){
+		result = ch - 'A' + 0xA;
+	}else {
+		result = HEX_INVALID;
+	}
+	
+	return result;
+}
+
+//strtoHex: Convert string to dec <=> stdlib.h :  int number = atoi(str);
+static strtoDec(uint8_t *str, uint16_t *decimal){
+	*decimal = 0;
+//    int sign = 1;
+    int i = 0;
+
+    // ignore empty characters at the beginning of the string
+    while (str[i] == ' ') {
+        i++;
+    }
+
+//    // identify sign
+//    if (str[i] == '-') {
+//        sign = -1;
+//        i++;
+//    } else if (str[i] == '+') {
+//        i++;
+//    }
+
+    // Convert to decimal
+    while (str[i] >= '0' && str[i] <= '9') {
+        *decimal = *decimal * 10 + (str[i] - '0');
+        i++;
+    }
+}
 /*==========CORE FUNCTION==========*/
 /*CmdScanFileName()*/
 /*CmdDisplayFile()*/
@@ -99,7 +139,20 @@ void CmdScanAgain(char *dest){
 	scanf("%s", dest);
 	fflush(stdin);
 }
-
+/*Change State*/
+State_t ChangeState(char *inputState, uint16_t *id){
+	State_t state;
+	if(inputState[0] == 'b'){
+		state = BACK;
+	}else if(inputState[0] == 'e'){
+		state = EXIT;
+ 	}else {
+ 		strtoDec(inputState, id);
+ 		state = JUMP;
+	 }
+	 return state;
+	 
+}
 
 
 

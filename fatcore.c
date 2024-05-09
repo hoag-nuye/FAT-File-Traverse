@@ -311,20 +311,6 @@ uint8_t FatBackEntry(){
 	fateid = TRUE;
 	return status;
 }
-/*Change State*/
-State_t ChangeState(char *inputState, uint16_t *id){
-	State_t state;
-	if(inputState[0] == 'b'){
-		state = BACK;
-	}else if(inputState[0] == 'e'){
-		state = EXIT;
- 	}else {
- 		strtoDec(inputState, id);
- 		state = JUMP;
-	 }
-	 return state;
-	 
-}
 /*Reset when read new directory*/
 void FatRST(){
 	RESET();
